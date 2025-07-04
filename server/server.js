@@ -415,7 +415,7 @@ app.post('/upload', upload.single('pdf'), async (req, res) => {
           console.log('Receieved data from frontend => ', { userId, subject, assignmentId, userName }); 
           // sending metadata to ai-pipeline
           try {
-            await axios.post('https://7a81-122-170-82-147.ngrok-free.app/process', {
+            await axios.post('https://e688-106-201-57-22.ngrok-free.app/process', {
               userId: userId,
               fileUrl: downloadUrl,
               filename: req.file.originalname,

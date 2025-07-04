@@ -152,6 +152,9 @@ export default function Home() {
   function redirectToNFTDashBoard() {
     navigate('/nfts');
   }
+  function redirectInUploadSection(){
+    navigate('/upload');
+  }
 
   return (
     <div className="home-page">
@@ -239,7 +242,7 @@ export default function Home() {
           </p>
           
           <div className="action-buttons">
-            <button className="btn-primary" onClick={() => googleLogin()}>
+            <button className="btn-primary" onClick={() => redirectInUploadSection()}>
               Get Started <FaArrowRight />
             </button>
             <button className="btn-secondary" onClick={handleCallAssistance} >
