@@ -74,7 +74,7 @@ const Dashboard = () => {
   const [monthlyChartData, setMonthlyChartData] = useState([]);
 
   const assignmentsPerPage = 8;
-  const API_BASE_URL = 'http://localhost:3900/api';
+  const API_BASE_URL = 'https://certimint.onrender.com/api';
 
   // Safe data access helper functions
   const safeGet = (obj, path, defaultValue = null) => {

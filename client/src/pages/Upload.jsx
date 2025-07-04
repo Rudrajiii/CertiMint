@@ -322,7 +322,7 @@ export default function Upload() {
 
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`http://localhost:3900/reviewed-assignments/${user.id}`);
+        const res = await axios.get(`https://certimint.onrender.com/reviewed-assignments/${user.id}`);
         const reviewed = res.data;
 
         if (reviewed.length > 0) {
@@ -361,7 +361,7 @@ export default function Upload() {
 
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get(`http://localhost:3900/notifications/${user.id}`);
+      const res = await axios.get(`https://certimint.onrender.com/notifications/${user.id}`);
       const newNotifications = res.data;
 
       if (newNotifications.length > 0) {
@@ -466,7 +466,7 @@ export default function Upload() {
     formData.append('subject', subject);
 
     try {
-      const res = await axios.post('http://localhost:3900/upload', formData, {
+      const res = await axios.post('https://certimint.onrender.com/upload', formData, {
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
