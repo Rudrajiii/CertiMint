@@ -5,6 +5,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+
 import { 
   FaGithub, 
   FaTwitter, 
@@ -13,14 +14,18 @@ import {
   FaRocket, 
   FaCertificate,
   FaArrowRight,
-  FaCheckCircle
+  FaCheckCircle,
+  FaPhone,
+  FaTimes
 } from 'react-icons/fa';
 import { 
   MdOutlineArrowOutward, 
   MdSecurity, 
   MdVerifiedUser, 
-  MdAutoAwesome 
+  MdAutoAwesome,
+  MdAddIcCall 
 } from "react-icons/md";
+import { toast } from 'react-toastify';
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import './Home.scss';
 import __certimint__ from '../../video/certimint.mp4';
@@ -29,6 +34,25 @@ export default function Home() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showAnnotation, setShowAnnotation] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [customerName, setCustomerName] = useState('');
+  const [isCallInitiating, setIsCallInitiating] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Add this state
+
+  const countryCodes = [
+    { code: '+91', country: 'India', flag: '🇮🇳' },
+    { code: '+1', country: 'USA', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+61', country: 'Australia', flag: '🇦🇺' },
+    { code: '+33', country: 'France', flag: '🇫🇷' },
+    { code: '+49', country: 'Germany', flag: '🇩🇪' },
+    { code: '+81', country: 'Japan', flag: '🇯🇵' },
+    { code: '+86', country: 'China', flag: '🇨🇳' },
+    { code: '+55', country: 'Brazil', flag: '🇧🇷' },
+    { code: '+7', country: 'Russia', flag: '🇷🇺' }
+  ];
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -55,6 +79,68 @@ export default function Home() {
       alert('Login Failed');
     },
   });
+
+  const handleCallAssistance = () => {
+    setShowCallModal(true);
+  };
+
+  const closeCallModal = () => {
+    setShowCallModal(false);
+    setPhoneNumber('');
+    setCustomerName('');
+    setCountryCode('+91');
+    setIsCallInitiating(false);
+    setShowSuccessMessage(false); // Reset success message state
+  };
+
+  const initiateCall = async () => {
+    if (!phoneNumber.trim()) {
+      toast.error('Please enter your phone number');
+      return;
+    }
+
+    if (phoneNumber.length < 10) {
+      toast.error('Please enter a valid phone number');
+      return;
+    }
+    
+    setIsCallInitiating(true);
+
+    try {
+      const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+      
+      const response = await fetch('http://localhost:5001/api/initiate-call', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: fullPhoneNumber,
+          customerName: customerName || 'Customer'
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('call initiated successfully:', result);
+        setShowSuccessMessage(true); // Show success message
+        
+        // Hide success message and close modal after 3.5 seconds
+        setTimeout(() => {
+          setShowSuccessMessage(false);
+          closeCallModal();
+        }, 3500);
+      } else {
+        toast.error(result.error || 'Failed to initiate call');
+      }
+    } catch (error) {
+      console.error('Error initiating call:', error);
+      toast.error('Failed to initiate call. Please try again.');
+    } finally {
+      setIsCallInitiating(false);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -156,7 +242,9 @@ export default function Home() {
             <button className="btn-primary" onClick={() => googleLogin()}>
               Get Started <FaArrowRight />
             </button>
-            <button className="btn-secondary">Learn More</button>
+            <button className="btn-secondary" onClick={handleCallAssistance} >
+              <MdAddIcCall style={{verticalAlign:'middle'}}/> Call for assistence
+            </button>
           </div>
         </div>
 
@@ -240,6 +328,97 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Call Assistance Modal */}
+      {showCallModal && (
+        <div className="modal-overlay" onClick={closeCallModal}>
+          <div className="call-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3><FaPhone /> Request Call Assistance</h3>
+              <button className="close-btn" onClick={closeCallModal}>
+                <FaTimes />
+              </button>
+            </div>
+            
+            <div className="modal-content">
+              {!showSuccessMessage ? (
+                <>
+                  <p>We'll call you to provide personalized assistance with CertiMint.</p>
+                  <div className="form-group">
+                    <label>Your Name (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="Enter your name"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Phone Number *</label>
+                    <div className="phone-input-group">
+                      <select 
+                        value={countryCode} 
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="country-select"
+                      >
+                        {countryCodes.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.code} {country.country}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        placeholder="Enter phone number"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                        className="phone-input"
+                        maxLength="15"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="modal-actions">
+                    <button 
+                      className="call-now-btn" 
+                      onClick={initiateCall}
+                      disabled={isCallInitiating}
+                    >
+                      {isCallInitiating ? (
+                        <>
+                          <div className="spinner"></div>
+                          Initiating Call...
+                        </>
+                      ) : (
+                        <>
+                          <FaPhone /> Call Now
+                        </>
+                      )}
+                    </button>
+                    <button className="cancel-btn" onClick={closeCallModal}>
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="success-message">
+                  <div className="success-icon">
+                    <FaCheckCircle size={48} />
+                  </div>
+                  <h3>Call Initiated Successfully!</h3>
+                  <p>You will receive a call shortly on {countryCode} {phoneNumber}</p>
+                  <div className="success-animation">
+                    <div className="check-animation"></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Footer */}
       <footer className="footer">

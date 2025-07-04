@@ -1129,3 +1129,351 @@ $success-color: #10B981;  // Add this line
     padding: 8px 16px;
   }
 }
+
+/* Call Assistance Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.call-modal {
+  @include glassmorphism;
+  border-radius: 20px;
+  max-width: 450px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  border: 1px solid rgba($accent-color, 0.3);
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    h3 {
+      margin: 0;
+      color: $text-color;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        color: $accent-color;
+      }
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: $text-muted;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: $text-color;
+      }
+    }
+  }
+
+  .modal-content {
+    padding: 2rem;
+
+    p {
+      color: $text-muted;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        color: $text-color;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: $text-color;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: rgba($accent-color, 0.5);
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        &::placeholder {
+          color: $text-muted;
+        }
+      }
+
+      .phone-input-group {
+        display: flex;
+        gap: 0.5rem;
+
+        .country-select {
+          padding: 12px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+          color: $text-color;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          min-width: 140px;
+
+          &:focus {
+            outline: none;
+            border-color: rgba($accent-color, 0.5);
+          }
+
+          option {
+            background: $background-color;
+            color: $text-color;
+            padding: 8px;
+          }
+        }
+
+        .phone-input {
+          flex: 1;
+          padding: 12px 16px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+          color: $text-color;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+
+          &:focus {
+            outline: none;
+            border-color: rgba($accent-color, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+          }
+
+          &::placeholder {
+            color: $text-muted;
+          }
+        }
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+
+      .call-now-btn {
+        flex: 1;
+        background: linear-gradient(135deg, $accent-color 0%, lighten($accent-color, 10%) 100%);
+        color: $background-dark;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 16px rgba($accent-color, 0.3);
+        }
+
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid transparent;
+          border-top: 2px solid $background-dark;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+      }
+
+      .cancel-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: $text-muted;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+          color: $text-color;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile responsiveness for modal */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .call-modal {
+    .modal-header {
+      padding: 1rem 1.5rem;
+
+      h3 {
+        font-size: 1.1rem;
+      }
+    }
+
+    .modal-content {
+      padding: 1.5rem;
+
+      .form-group .phone-input-group {
+        flex-direction: column;
+
+        .country-select {
+          min-width: auto;
+        }
+      }
+
+      .modal-actions {
+        flex-direction: column;
+
+        .call-now-btn,
+        .cancel-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+/* Success Message Styles */
+.success-message {
+  text-align: center;
+  padding: 2rem 1rem;
+  
+  .success-icon {
+    color: $success-color;
+    margin-bottom: 1rem;
+    animation: successPulse 0.6s ease-out;
+  }
+  
+  h3 {
+    color: $success-color;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    animation: slideInUp 0.5s ease-out 0.2s both;
+  }
+  
+  p {
+    color: $text-muted;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    animation: slideInUp 0.5s ease-out 0.4s both;
+  }
+  
+  .success-animation {
+    position: relative;
+    height: 4px;
+    background: rgba($success-color, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    animation: slideInUp 0.5s ease-out 0.6s both;
+    
+    .check-animation {
+      height: 100%;
+      background: linear-gradient(90deg, 
+        $success-color 0%, 
+        lighten($success-color, 15%) 50%, 
+        $success-color 100%);
+      border-radius: 2px;
+      animation: progressBar 3.5s linear;
+    }
+  }
+}
+
+/* Animations */
+@keyframes successPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progressBar {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Update modal content to handle success state */
+.call-modal .modal-content {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
